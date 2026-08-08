@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lore — Build Your Lore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #08111F;
+    --surface: #151B2D;
+    --elevated: #0E1A2E;
+    --primary: #4D8BFF;
+    --accent: #395CD0;
+    --text-primary: #FFFFFF;
+    --text-secondary: rgba(255,255,255,0.7);
+    --text-muted: rgba(255,255,255,0.45);
+    --border: rgba(255,255,255,0.08);
+    --border-strong: rgba(255,255,255,0.15);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ===== Background atmosphere ===== */
+  .bg-glow {
+    position: fixed;
+    top: -20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 900px;
+    height: 900px;
+    background: radial-gradient(circle, rgba(77,139,255,0.13) 0%, rgba(77,139,255,0) 65%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .bg-grid {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(77,139,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(77,139,255,0.035) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ===== Nav ===== */
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 0 0;
+  }
+
+  .logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+  }
+
+  .nav-link {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 200ms ease;
+  }
+
+  .nav-link:hover { color: var(--text-primary); }
+
+  /* ===== Hero ===== */
+  .hero {
+    padding: 96px 0 48px;
+    text-align: center;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--primary);
+    background: rgba(77,139,255,0.1);
+    border: 1px solid rgba(77,139,255,0.2);
+    border-radius: 999px;
+    padding: 6px 14px;
+    margin-bottom: 28px;
+  }
+
+  .eyebrow .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--primary);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(38px, 7vw, 60px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+
+  h1 .accent {
+    color: var(--primary);
+  }
+
+  .subhead {
+    font-size: 17px;
+    color: var(--text-secondary);
+    max-width: 480px;
+    margin: 0 auto 40px;
+  }
+
+  .subhead strong { color: var(--text-primary); font-weight: 500; }
+
+  /* ===== Email form ===== */
+  .signup-form {
+    display: flex;
+    gap: 10px;
+    max-width: 420px;
+    margin: 0 auto 16px;
+  }
+
+  .signup-form input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: all 200ms ease;
+  }
+
+  .signup-form input::placeholder { color: var(--text-muted); }
+
+  .signup-form input:focus {
+    border-color: var(--primary);
+    background: var(--elevated);
+    box-shadow: 0 0 0 3px rgba(77,139,255,0.12);
+  }
+
+  .signup-form button {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 200ms ease;
+  }
+
+  .signup-form button:hover { background: var(--accent); }
+  .signup-form button:active { transform: translateY(1px); }
+
+  .form-note {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 64px;
+  }
+
+  .form-note strong { color: var(--primary); font-weight: 600; }
+
+  .success-msg {
+    display: none;
+    max-width: 420px;
+    margin: 0 auto 64px;
+    background: rgba(77,139,255,0.08);
+    border: 1px solid rgba(77,139,255,0.25);
+    border-radius: 14px;
+    padding: 18px 20px;
+    font-size: 14px;
+  }
+
+  .success-msg.show { display: block; }
+
+  .success-msg .num {
+    color: var(--primary);
+    font-weight: 700;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  /* ===== Counter strip ===== */
+  .counter-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .avatars {
+    display: flex;
+  }
+
+  .avatars span {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--bg);
+    margin-left: -8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+  }
+
+  .avatars span:first-child { margin-left: 0; }
+
+  .counter-text {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .counter-text .count {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  /* ===== Divider ===== */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0 0 64px;
+  }
+
+  /* ===== Philosophy section ===== */
+  .philosophy {
+    text-align: center;
+    margin-bottom: 72px;
+  }
+
+  .philosophy .kicker {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+  }
+
+  .philosophy h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    line-height: 1.3;
+  }
+
+  .philosophy p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    max-width: 460px;
+    margin: 0 auto;
+  }
+
+  /* ===== Pillars ===== */
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 72px;
+  }
+
+  .pillar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 24px 18px;
+    text-align: left;
+    transition: border-color 200ms ease;
+  }
+
+  .pillar:hover { border-color: var(--border-strong); }
+
+  .pillar-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: rgba(77,139,255,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    font-size: 16px;
+  }
+
+  .pillar h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .pillar p {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+
+  /* ===== Founding member card ===== */
+  .founding {
+    background: linear-gradient(160deg, rgba(77,139,255,0.09), rgba(21,27,45,0.4));
+    border: 1px solid rgba(77,139,255,0.22);
+    border-radius: 22px;
+    padding: 40px 32px;
+    text-align: center;
+    margin-bottom: 72px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .founding::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(77,139,255,0.15), transparent 70%);
+    pointer-events: none;
+  }
+
+  .founding-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: rgba(77,139,255,0.15);
+    border: 1px solid rgba(77,139,255,0.3);
+    font-size: 22px;
+    margin-bottom: 18px;
+  }
+
+  .founding h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .founding p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    max-width: 400px;
+    margin: 0 auto 24px;
+  }
+
+  .founding-perks {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 340px;
+    margin: 0 auto;
+    text-align: left;
+  }
+
+  .perk {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .perk-check {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: rgba(77,139,255,0.15);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  /* ===== Footer ===== */
+  footer {
+    text-align: center;
+    padding: 40px 0 60px;
+    border-top: 1px solid var(--border);
+  }
+
+  footer .logo {
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  footer .tagline {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  footer .social {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 8px 16px;
+    transition: all 200ms ease;
+  }
+
+  footer .social:hover {
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+  }
+
+  @media (max-width: 560px) {
+    .signup-form { flex-direction: column; }
+    .pillars { grid-template-columns: 1fr; }
+    h1 { font-size: 34px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="bg-grid"></div>
+
+<div class="wrap">
+
+  <nav>
+    <div class="logo">Lore</div>
+    <a href="#" class="nav-link" id="igLink">Follow the build ↗</a>
+  </nav>
+
+  <section class="hero">
+    <div class="eyebrow"><span class="dot"></span> Coming soon — pre-registration open</div>
+
+    <h1>Build Your <span class="accent">Lore</span></h1>
+
+    <p class="subhead">
+      A social platform for people making something real —
+      <strong>your projects, your progress, your story</strong>,
+      not just your highlight reel.
+    </p>
+
+    <form class="signup-form" id="signupForm">
+      <input type="email" id="emailInput" placeholder="you@email.com" required>
+      <button type="submit">Reserve my spot</button>
+    </form>
+
+    <div class="success-msg" id="successMsg">
+      You're in — founding member <span class="num" id="memberNum">#000</span>. Watch your inbox and my Instagram for launch news.
+    </div>
+
+    <div class="form-note">
+      First <strong>500</strong> sign-ups become Founding Members — see what that means below.
+    </div>
+
+    <div class="counter-strip">
+      <div class="avatars">
+        <span>🧑‍💻</span><span>🎨</span><span>🚀</span><span>✍️</span>
+      </div>
+      <div class="counter-text"><span class="count" id="counterNum">247</span> builders already joined</div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="philosophy">
+    <div class="kicker">The Philosophy</div>
+    <h2>Most social media rewards outcomes.<br>Lore rewards the process.</h2>
+    <p>
+      Instead of asking "what went viral today?" — Lore asks
+      "what did you build today?" Every project, every setback,
+      every small win becomes part of your story.
+    </p>
+  </section>
+
+  <div class="pillars">
+    <div class="pillar">
+      <div class="pillar-icon">📈</div>
+      <h3>Momentum over motivation</h3>
+      <p>Motivation fades. Momentum compounds. Lore is built to help you keep showing up.</p>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">🧭</div>
+      <h3>Progress, made visible</h3>
+      <p>Every post becomes part of a visible timeline — proof you're moving forward.</p>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">📖</div>
+      <h3>Your journey is your lore</h3>
+      <p>Your profile isn't a feed. It's the story of everything you've built.</p>
+    </div>
+  </div>
+
+  <div class="founding">
+    <div class="founding-badge">🏅</div>
+    <h3>Become a Founding Member</h3>
+    <p>The first people through the door shape what Lore becomes — and get remembered for it.</p>
+    <div class="founding-perks">
+      <div class="perk"><span class="perk-check">✓</span> A permanent Founding Member badge on your profile</div>
+      <div class="perk"><span class="perk-check">✓</span> Your member number, locked in forever (yes, #1 exists)</div>
+      <div class="perk"><span class="perk-check">✓</span> Early access before the public launch</div>
+      <div class="perk"><span class="perk-check">✓</span> Free premium the moment it exists — no expiration</div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="logo">Lore</div>
+    <div class="tagline">Every project. Every lesson. Every day of work — this is your lore.</div>
+    <a href="#" class="social" id="igLinkFooter">📷 Follow the build on Instagram</a>
+  </footer>
+
+</div>
+
+<script>
+  // Replace this with your real Instagram URL
+  const IG_URL = "https://instagram.com/your_handle";
+  document.getElementById('igLink').href = IG_URL;
+  document.getElementById('igLinkFooter').href = IG_URL;
+
+  // ---- Live-feeling counter (starts at a base, ticks up slowly) ----
+  const counterEl = document.getElementById('counterNum');
+  let base = 247;
+  setInterval(() => {
+    if (Math.random() < 0.4) {
+      base += 1;
+      counterEl.textContent = base;
+    }
+  }, 4000);
+
+  // ---- Form submission ----
+  // IMPORTANT: This currently just simulates success locally.
+  // To actually collect emails, wire this up to one of:
+  //   1. Formspree (formspree.io) — free, no backend needed
+  //   2. A Google Form (set input name to match the Form's entry field)
+  //   3. Your own Supabase table (insert via supabase-js)
+  const form = document.getElementById('signupForm');
+  const successMsg = document.getElementById('successMsg');
+  const memberNum = document.getElementById('memberNum');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const email = document.getElementById('emailInput').value;
+    if (!email) return;
+
+    // TODO: send `email` to your waitlist backend here.
+    // Example with Formspree:
+    // fetch('https://formspree.io/f/YOUR_FORM_ID', {
+    //   method: 'POST',
+    //   headers: { 'Accept': 'application/json' },
+    //   body: new FormData(form)
+    // });
+
+    base += 1;
+    counterEl.textContent = base;
+    memberNum.textContent = '#' + String(base).padStart(3, '0');
+    form.style.display = 'none';
+    successMsg.classList.add('show');
+  });
+</script>
+
+</body>
+</html>
