@@ -583,10 +583,23 @@
 
   </div>
 
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script>
     const IG_URL = "https://www.instagram.com/unstable_conclusions/?hl=en";
     document.getElementById('igLink').href = IG_URL;
     document.getElementById('igLinkFooter').href = IG_URL;
+
+    // --- SUPABASE CONFIGURATION ---
+    // Replace with your Supabase Project URL and Anon Key from your Supabase Dashboard Settings -> API
+    const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    
+    let supabase = null;
+    if (SUPABASE_URL !== 'YOUR_SUPABASE_URL' && window.supabase) {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
 
     const counterEl = document.getElementById('counterNum');
     let base = 247;
@@ -601,17 +614,28 @@
     const successMsg = document.getElementById('successMsg');
     const memberNum = document.getElementById('memberNum');
 
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
       e.preventDefault();
-      const email = document.getElementById('emailInput').value;
+      const email = document.getElementById('emailInput').value.trim();
       if (!email) return;
 
-      // TODO: Replace with Formspree / Supabase / Web3Forms endpoint
-      // fetch('https://formspree.io/f/YOUR_FORM_ID', {
-      //   method: 'POST',
-      //   headers: { 'Accept': 'application/json' },
-      //   body: new FormData(form)
-      // });
+      const submitBtn = form.querySelector('button');
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Reserving...';
+
+      if (supabase) {
+        try {
+          const { data, error } = await supabase
+            .from('waitlist')
+            .insert([{ email: email }]);
+
+          if (error) {
+            console.error('Supabase error:', error);
+          }
+        } catch (err) {
+          console.error('Network / Supabase error:', err);
+        }
+      }
 
       base += 1;
       counterEl.textContent = base;
