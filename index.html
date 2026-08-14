@@ -21,15 +21,42 @@
       --font-heading: 'Space Grotesk', 'Courbe', sans-serif;
       --font-body: 'Plus Jakarta Sans', sans-serif;
       --bg: #08111F;
+      /* 60% dark background */
       --surface: #151B2D;
-      --elevated: #0E1A2E;
-      --primary: #4D8BFF;
-      --accent: #395CD0;
+      /* secondary dark surface */
+      --primary: #3B82F6;
+      /* 30% brand blue */
+      --accent: #FBBF24;
+      /* 10% amber accent */
       --text-primary: #FFFFFF;
       --text-secondary: rgba(255, 255, 255, 0.7);
       --text-muted: rgba(255, 255, 255, 0.45);
       --border: rgba(255, 255, 255, 0.08);
       --border-strong: rgba(255, 255, 255, 0.15);
+    }
+
+    .bg-glow,
+    .bg-grid {
+      display: none;
+      /* remove gradient backgrounds */
+    }
+
+    .eyebrow {
+      background: none;
+      border: none;
+      color: var(--primary);
+      padding: 0;
+    }
+
+    .eyebrow .dot {
+      display: none;
+      /* remove decorative dot */
+    }
+
+    .founding {
+      background: var(--surface);
+      /* solid background, no gradient */
+      border: 1px solid rgba(77, 139, 255, 0.22);
     }
 
     html {
