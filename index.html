@@ -331,15 +331,18 @@
     }
 
     .pillar-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 9px;
-      background: var(--primary-dim);
+      width: 56px;
+      height: 56px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 14px;
-      font-size: 16px;
+      margin-bottom: 16px;
+    }
+
+    .pillar-icon img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
     }
 
     .pillar h3 {
@@ -370,13 +373,15 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      background: var(--raised);
-      border: 1px solid var(--border-hover);
-      font-size: 22px;
+      width: 80px;
+      height: 80px;
       margin-bottom: 18px;
+    }
+
+    .founding-badge img {
+      width: 76px;
+      height: 76px;
+      object-fit: contain;
     }
 
     .founding h3 {
@@ -533,17 +538,17 @@
 
     <div class="pillars">
       <div class="pillar">
-        <div class="pillar-icon">📈</div>
+        <div class="pillar-icon"><img src="assets/builder timeline.png" alt="Builder Timeline"></div>
         <h3>Builder Timeline</h3>
         <p>Document daily progress, project updates, and lessons learned into a permanent record of your growth.</p>
       </div>
       <div class="pillar">
-        <div class="pillar-icon">🤝</div>
+        <div class="pillar-icon"><img src="assets/bulletin.png" alt="The Bulletin"></div>
         <h3>The Bulletin</h3>
         <p>Find teammates, recruit collaborators, exchange feedback, and connect with accountability partners.</p>
       </div>
       <div class="pillar">
-        <div class="pillar-icon">⚡</div>
+        <div class="pillar-icon"><img src="assets/progress.png" alt="XP Progression"></div>
         <h3>XP Progression</h3>
         <p>Earn XP by shipping, staying consistent, and supporting other builders. Unlock advanced tools as you grow.
         </p>
@@ -551,7 +556,7 @@
     </div>
 
     <div class="founding">
-      <div class="founding-badge">🏅</div>
+      <div class="founding-badge"><img src="assets/medal.png" alt="Founding Member Medal"></div>
       <h3>Become a Founding Member</h3>
       <p>The first 250 builders through the door permanently shape Lore's history — and get remembered for it.</p>
       <div class="founding-perks">
