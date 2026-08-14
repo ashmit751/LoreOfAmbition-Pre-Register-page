@@ -5,14 +5,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lore of Ambition — Build Your Lore</title>
-  <meta name="description" content="A social platform for ambitious builders — document your progress, find collaborators, and build a story worth remembering. Pre-register now.">
+  <meta name="description"
+    content="A social platform for ambitious builders — document your progress, find collaborators, and build a story worth remembering. Pre-register now.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet">
 
   <style>
     /* ===== RESET ===== */
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
@@ -25,9 +30,9 @@
     ===================================== */
     :root {
       /* backgrounds — 60 % */
-      --bg:      #08111F;
+      --bg: #08111F;
       --surface: #0D1626;
-      --raised:  #141E30;
+      --raised: #141E30;
 
       /* brand — 30 % */
       --primary: #3B82F6;
@@ -38,20 +43,22 @@
       --accent: #F59E0B;
 
       /* text */
-      --text-primary:   #FFFFFF;
+      --text-primary: #FFFFFF;
       --text-secondary: rgba(255, 255, 255, 0.65);
-      --text-muted:     rgba(255, 255, 255, 0.38);
+      --text-muted: rgba(255, 255, 255, 0.38);
 
       /* borders */
-      --border:       rgba(255, 255, 255, 0.07);
+      --border: rgba(255, 255, 255, 0.07);
       --border-hover: rgba(255, 255, 255, 0.14);
 
       /* typography */
-      --font-heading: 'Space Grotesk', sans-serif;
-      --font-body:    'Plus Jakarta Sans', sans-serif;
+      --font-heading: 'Satoshi', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
     }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       background: var(--bg);
@@ -92,7 +99,9 @@
       transition: color 180ms ease;
     }
 
-    .nav-link:hover { color: var(--text-primary); }
+    .nav-link:hover {
+      color: var(--text-primary);
+    }
 
     /* ===== HERO ===== */
     .hero {
@@ -159,7 +168,9 @@
       transition: border-color 180ms ease, box-shadow 180ms ease;
     }
 
-    .signup-form input::placeholder { color: var(--text-muted); }
+    .signup-form input::placeholder {
+      color: var(--text-muted);
+    }
 
     .signup-form input:focus {
       border-color: var(--primary);
@@ -180,8 +191,13 @@
       transition: background 180ms ease, transform 100ms ease;
     }
 
-    .signup-form button:hover  { background: #2563EB; }
-    .signup-form button:active { transform: translateY(1px); }
+    .signup-form button:hover {
+      background: #2563EB;
+    }
+
+    .signup-form button:active {
+      transform: translateY(1px);
+    }
 
     .form-note {
       font-size: 12px;
@@ -189,7 +205,10 @@
       margin-bottom: 56px;
     }
 
-    .form-note strong { color: var(--accent); font-weight: 600; }
+    .form-note strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
 
     /* success */
     .success-msg {
@@ -204,7 +223,9 @@
       color: var(--text-secondary);
     }
 
-    .success-msg.show { display: block; }
+    .success-msg.show {
+      display: block;
+    }
 
     .success-msg .num {
       color: var(--accent);
@@ -220,7 +241,9 @@
       gap: 10px;
     }
 
-    .avatars { display: flex; }
+    .avatars {
+      display: flex;
+    }
 
     .avatars span {
       width: 26px;
@@ -235,10 +258,19 @@
       font-size: 11px;
     }
 
-    .avatars span:first-child { margin-left: 0; }
+    .avatars span:first-child {
+      margin-left: 0;
+    }
 
-    .counter-text { font-size: 13px; color: var(--text-muted); }
-    .counter-text .count { color: var(--text-primary); font-weight: 600; }
+    .counter-text {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .counter-text .count {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
 
     /* ===== DIVIDER ===== */
     .divider {
@@ -296,7 +328,9 @@
       transition: border-color 180ms ease;
     }
 
-    .pillar:hover { border-color: var(--border-hover); }
+    .pillar:hover {
+      border-color: var(--border-hover);
+    }
 
     .pillar-icon {
       width: 34px;
@@ -355,7 +389,7 @@
       margin-bottom: 10px;
     }
 
-    .founding > p {
+    .founding>p {
       font-size: 14px;
       color: var(--text-secondary);
       max-width: 380px;
@@ -401,7 +435,10 @@
       border-top: 1px solid var(--border);
     }
 
-    footer .logo { display: block; margin-bottom: 10px; }
+    footer .logo {
+      display: block;
+      margin-bottom: 10px;
+    }
 
     footer .tagline {
       font-size: 13px;
@@ -429,9 +466,17 @@
 
     /* ===== RESPONSIVE ===== */
     @media (max-width: 560px) {
-      .signup-form  { flex-direction: column; }
-      .pillars      { grid-template-columns: 1fr; }
-      h1            { font-size: 34px; }
+      .signup-form {
+        flex-direction: column;
+      }
+
+      .pillars {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 34px;
+      }
     }
   </style>
 </head>
@@ -502,7 +547,8 @@
       <div class="pillar">
         <div class="pillar-icon">⚡</div>
         <h3>XP Progression</h3>
-        <p>Earn XP by shipping, staying consistent, and supporting other builders. Unlock advanced tools as you grow.</p>
+        <p>Earn XP by shipping, staying consistent, and supporting other builders. Unlock advanced tools as you grow.
+        </p>
       </div>
     </div>
 
@@ -514,7 +560,8 @@
         <div class="perk"><span class="perk-check">✓</span> Permanent Founding Member tag on your Builder Profile</div>
         <div class="perk"><span class="perk-check">✓</span> Locked member number (#001 – #250) forever</div>
         <div class="perk"><span class="perk-check">✓</span> Early access to V1 — Builder Feed & Bulletin</div>
-        <div class="perk"><span class="perk-check">✓</span> Exclusive founding supporter status & feature tier unlocks</div>
+        <div class="perk"><span class="perk-check">✓</span> Exclusive founding supporter status & feature tier unlocks
+        </div>
       </div>
     </div>
 
@@ -527,7 +574,7 @@
   </div>
 
   <script>
-    const IG_URL = "https://instagram.com/your_handle";
+    const IG_URL = "https://www.instagram.com/unstable_conclusions/?hl=en";
     document.getElementById('igLink').href = IG_URL;
     document.getElementById('igLinkFooter').href = IG_URL;
 
@@ -565,4 +612,5 @@
   </script>
 
 </body>
+
 </html>
