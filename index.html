@@ -565,7 +565,7 @@
           <img src="assets/2.png" alt="Builder avatar">
           <img src="assets/3.png" alt="Builder avatar">
         </div>
-        <div class="counter-text"><span class="count" id="counterNum">42</span> builders already joined</div>
+        <div class="counter-text"><span class="count" id="counterNum">—</span> builders already joined</div>
       </div>
     </section>
 
@@ -654,39 +654,39 @@
     const SUPABASE_URL = 'https://rsmbsrczbfbemmjnfput.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_md9uRto33VlOXrkd-H3p_Q_Nc5ju4yS';
 
-    let supabase = null;
-    if (SUPABASE_URL !== 'YOUR_SUPABASE_URL' && window.supabase) {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    }
+    // Use a different variable name to avoid collision with the CDN's window.supabase global
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const counterEl = document.getElementById('counterNum');
+    const memberNum = document.getElementById('memberNum');
     let base = 0;
-    // Fetch current pre-registration count from Supabase
-    if (supabase) {
-      supabase
-        .from('waitlist')
-        .select('id', { count: 'exact', head: true })
-        .then(({ count, error }) => {
-          if (!error && count !== null) {
-            base = count;
-            if (counterEl) counterEl.textContent = base;
-          } else {
-            console.error('Error fetching count from Supabase:', error);
-          }
-        })
-        .catch(err => console.error('Supabase fetch error:', err));
-    }
-    // Optional: modest random increment for visual effect (can be removed if not desired)
-    setInterval(() => {
-      if (Math.random() < 0.1) {
-        base += 1;
-        if (counterEl) counterEl.textContent = base;
+
+    // --- Shared helper: fetch real count and update both counter + member number ---
+    async function fetchCount() {
+      try {
+        const { count, error } = await supabaseClient
+          .from('waitlist')
+          .select('*', { count: 'exact', head: true });
+        console.log('[fetchCount] count:', count, 'error:', error);
+        if (!error && count !== null) {
+          base = count;
+          if (counterEl) counterEl.textContent = base;
+          if (memberNum) memberNum.textContent = '#' + String(base).padStart(3, '0');
+        } else if (error) {
+          console.error('[fetchCount] Supabase returned error:', error.message, '| code:', error.code);
+        }
+      } catch (err) {
+        console.error('[fetchCount] Network/JS error:', err);
       }
-    }, 5000);
+    }
+
+    // Fetch on page load
+    fetchCount();
+    // Poll every 30 s so visitors see live updates without a refresh
+    setInterval(fetchCount, 30000);
 
     const form = document.getElementById('signupForm');
     const successScreen = document.getElementById('successScreen');
-    const memberNum = document.getElementById('memberNum');
 
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
@@ -705,7 +705,7 @@
       if (submitBtn) { submitBtn.disabled = true; submitBtn.innerText = 'Reserving...'; }
 
       // --- Insert into Supabase and WAIT for result ---
-      const { error: insertError } = await supabase.from('waitlist').insert([{ email }]);
+      const { error: insertError } = await supabaseClient.from('waitlist').insert([{ email }]);
 
       if (insertError) {
         // Re-enable the button so the user can try again
@@ -721,16 +721,8 @@
         return; // Stop here — do NOT show success screen
       }
 
-      // --- Insert succeeded — fetch real count from DB ---
-      const { count, error: countError } = await supabase
-        .from('waitlist')
-        .select('id', { count: 'exact', head: true });
-
-      if (!countError && count !== null) {
-        base = count;
-        if (counterEl) counterEl.textContent = base;
-      }
-      if (memberNum) memberNum.textContent = '#' + String(base).padStart(3, '0');
+      // --- Insert succeeded — fetch real count (updates both counter + member number) ---
+      await fetchCount();
 
       // Hide hero section entirely
       const heroSection = document.querySelector('.hero');
