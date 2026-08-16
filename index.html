@@ -564,18 +564,74 @@
       opacity: 0.3;
     }
 
-    /* ===== RESPONSIVE ===== */
+    /* ===== MOBILE — iOS & Android ===== */
+
+    /* Remove iOS input styling overrides */
+    input, button {
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    /* Remove tap highlight on mobile */
+    a, button {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Ensure tap targets are at least 44px (Apple HIG) */
+    .footer-socials a {
+      min-width: 44px;
+      min-height: 44px;
+    }
+
     @media (max-width: 560px) {
+      /* Nav */
+      .logo-img {
+        height: 64px;
+      }
+
+      /* Hero */
+      h1 {
+        font-size: 34px;
+      }
+
+      .subhead {
+        font-size: 15px;
+      }
+
+      /* Form — stack vertically */
       .signup-form {
         flex-direction: column;
       }
 
+      .signup-form input,
+      .signup-form button {
+        width: 100%;
+      }
+
+      /* Pillars — single column */
       .pillars {
         grid-template-columns: 1fr;
       }
 
-      h1 {
-        font-size: 34px;
+      /* Founding card — tighter padding */
+      .founding {
+        padding: 28px 20px;
+      }
+
+      /* Member card */
+      .member-card {
+        padding: 22px 18px;
+      }
+
+      /* Footer legal links — center and wrap cleanly */
+      .footer-bottom {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+      }
+
+      .footer-dot {
+        display: none;
       }
     }
   </style>
@@ -717,7 +773,7 @@
 
       <!-- Legal row -->
       <div class="footer-bottom">
-        <span>© 2025 Lore of Ambition. All rights reserved.</span>
+        <span>© 2026 Lore of Ambition. All rights reserved.</span>
         <span class="footer-dot">·</span>
         <a href="#" id="privacyLink">Privacy Policy</a>
         <span class="footer-dot">·</span>
