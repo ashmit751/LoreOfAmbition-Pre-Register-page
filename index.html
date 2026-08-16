@@ -508,6 +508,7 @@
       padding-bottom: 52px;
       cursor: pointer;
       user-select: none;
+      touch-action: none;
       /* smooth slide-up exit */
       transition: transform 0.65s cubic-bezier(0.76, 0, 0.24, 1),
                   opacity 0.65s cubic-bezier(0.76, 0, 0.24, 1);
@@ -673,7 +674,7 @@
       <div class="logo">Lore of Ambition</div>
       <div class="tagline">For developers, designers, founders, creators & indie hackers making something real.</div>
       <a href="#" class="social" id="igLinkFooter">📷 Follow the build on Instagram</a>
-    </footer>
+</footer>
 
   </div>
 
@@ -684,107 +685,107 @@
     /* ===== COVER DISMISS LOGIC ===== */
     (function () {
       const cover = document.getElementById('coverScreen');
+      if (!cover) return;
+
+      let startY = 0;
+      let currentY = 0;
+      let isSwiping = false;
       let dismissed = false;
-
-      // Touch state
-      let touchStartY = 0;
-      let touchCurrentY = 0;
-      let isTouching = false;
-
-      // Mouse drag state
-      let mouseStartY = 0;
-      let isDragging = false;
 
       function dismiss() {
         if (dismissed) return;
         dismissed = true;
-        cover.style.transform = ''; // clear any live drag offset
-        cover.style.transition = 'transform 0.65s cubic-bezier(0.76,0,0.24,1), opacity 0.65s cubic-bezier(0.76,0,0.24,1)';
-        cover.classList.add('dismissing');
+        cover.style.transition = 'transform 0.6s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.6s ease';
+        cover.style.transform = 'translateY(-100vh)';
+        cover.style.opacity = '0';
         document.body.classList.remove('cover-active');
-        cover.addEventListener('transitionend', () => {
-          cover.classList.add('hidden');
-        }, { once: true });
+
+        setTimeout(() => {
+          cover.style.display = 'none';
+        }, 600);
       }
 
-      /* ── TOUCH (mobile) ───────────────────────── */
+      // Touch handlers
       cover.addEventListener('touchstart', (e) => {
-        touchStartY = e.touches[0].clientY;
-        touchCurrentY = touchStartY;
-        isTouching = true;
-        cover.style.transition = 'none'; // disable transition while dragging
+        if (e.touches.length > 1) return;
+        startY = e.touches[0].clientY;
+        currentY = startY;
+        isSwiping = true;
+        cover.style.transition = 'none';
       }, { passive: true });
 
       cover.addEventListener('touchmove', (e) => {
-        if (!isTouching) return;
-        touchCurrentY = e.touches[0].clientY;
-        const delta = touchStartY - touchCurrentY; // positive = upward swipe
-        if (delta > 0) {
-          cover.style.transform = `translateY(${-delta}px)`;
-          cover.style.touchAction = 'none';
+        if (!isSwiping) return;
+        currentY = e.touches[0].clientY;
+        const deltaY = startY - currentY;
+        if (deltaY > 0) {
+          // Drag up visually
+          cover.style.transform = `translateY(${-deltaY}px)`;
         }
       }, { passive: true });
 
       cover.addEventListener('touchend', (e) => {
-        if (!isTouching) return;
-        isTouching = false;
-        const delta = touchStartY - e.changedTouches[0].clientY;
-        if (delta > 60) {
+        if (!isSwiping) return;
+        isSwiping = false;
+        const deltaY = startY - currentY;
+
+        // If swiped up more than 50px OR tap/short distance, dismiss
+        if (deltaY > 50 || Math.abs(deltaY) < 10) {
           dismiss();
         } else {
-          // Snap back
+          // Reset position if swipe wasn't far enough
           cover.style.transition = 'transform 0.3s ease';
           cover.style.transform = 'translateY(0)';
         }
       }, { passive: true });
 
-      /* ── MOUSE DRAG (desktop) ──────────────────── */
+      // Click / Tap backup
+      cover.addEventListener('click', () => {
+        dismiss();
+      });
+
+      // Mouse drag backup (for desktop previewing swipe)
+      let isMouseDown = false;
+      let mouseStartY = 0;
+
       cover.addEventListener('mousedown', (e) => {
+        isMouseDown = true;
         mouseStartY = e.clientY;
-        isDragging = false;
         cover.style.transition = 'none';
-        cover.style.cursor = 'grabbing';
       });
 
       window.addEventListener('mousemove', (e) => {
-        if (!mouseStartY) return;
-        const delta = mouseStartY - e.clientY; // positive = dragging upward
-        if (delta > 5) isDragging = true;
-        if (isDragging && delta > 0) {
-          cover.style.transform = `translateY(${-delta}px)`;
+        if (!isMouseDown) return;
+        const deltaY = mouseStartY - e.clientY;
+        if (deltaY > 0) {
+          cover.style.transform = `translateY(${-deltaY}px)`;
         }
       });
 
       window.addEventListener('mouseup', (e) => {
-        if (!mouseStartY) return;
-        const delta = mouseStartY - e.clientY;
-        mouseStartY = 0;
-        cover.style.cursor = 'pointer';
-        if (isDragging) {
-          if (delta > 80) {
-            dismiss();
-          } else {
-            cover.style.transition = 'transform 0.3s ease';
-            cover.style.transform = 'translateY(0)';
-          }
-          isDragging = false;
-        } else {
-          // Pure click (no drag) → dismiss
+        if (!isMouseDown) return;
+        isMouseDown = false;
+        const deltaY = mouseStartY - e.clientY;
+        if (deltaY > 40 || Math.abs(deltaY) < 5) {
           dismiss();
+        } else {
+          cover.style.transition = 'transform 0.3s ease';
+          cover.style.transform = 'translateY(0)';
         }
       });
 
-      /* ── SCROLL WHEEL (desktop) ───────────────── */
-      window.addEventListener('wheel', function onWheel(e) {
-        if (e.deltaY > 0) {
+      // Mouse wheel / trackpad scroll
+      window.addEventListener('wheel', (e) => {
+        if (!dismissed && e.deltaY > 0) {
           dismiss();
-          window.removeEventListener('wheel', onWheel);
         }
       }, { passive: true });
 
-      /* ── KEYBOARD ─────────────────────────────── */
-      cover.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowUp') dismiss();
+      // Keypress (Space / Enter / Up Arrow)
+      window.addEventListener('keydown', (e) => {
+        if (!dismissed && [' ', 'Enter', 'ArrowUp', 'ArrowDown', 'PageDown'].includes(e.key)) {
+          dismiss();
+        }
       });
     })();
 
