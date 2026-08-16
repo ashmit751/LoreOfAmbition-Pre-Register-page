@@ -209,27 +209,66 @@
       font-weight: 600;
     }
 
-    /* success */
-    .success-msg {
-      display: none;
-      max-width: 420px;
-      margin: 0 auto 56px;
+
+
+    .success-badge {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 24px;
+      background: var(--primary-dim);
+      border: 1px solid var(--primary-border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 30px rgba(59, 130, 246, 0.25);
+    }
+
+    .success-badge svg {
+      width: 32px;
+      height: 32px;
+      stroke: var(--primary);
+      stroke-width: 2.5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .member-card {
       background: var(--surface);
       border: 1px solid var(--primary-border);
-      border-radius: 12px;
-      padding: 18px 20px;
-      font-size: 14px;
-      color: var(--text-secondary);
+      border-radius: 16px;
+      padding: 28px 24px;
+      max-width: 440px;
+      margin: 32px auto 36px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
     }
 
-    .success-msg.show {
-      display: block;
+    .member-card .card-title {
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
     }
 
-    .success-msg .num {
-      color: var(--accent);
-      font-weight: 700;
+    .member-card .card-number {
       font-family: var(--font-heading);
+      font-size: 42px;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+    }
+
+    .member-card .card-status {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 6px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* ===== COUNTER STRIP ===== */
@@ -514,10 +553,7 @@
         <input type="email" id="emailInput" placeholder="you@email.com" required>
         <button type="submit">Reserve my spot</button>
       </form>
-
-      <div class="success-msg" id="successMsg">
-        You're in — founding member <span class="num" id="memberNum">#000</span>. Watch your inbox for launch news.
-      </div>
+      <p id="formError" style="display:none; color:#F87171; font-size:13px; margin-top:10px;"></p>
 
       <div class="form-note">
         First <strong>250</strong> sign-ups become Founding Members — see what that means below.
@@ -534,6 +570,26 @@
     </section>
 
     <div class="divider"></div>
+
+    <!-- Success screen moved outside hero -->
+    <section class="success-screen" id="successScreen" style="display:none; padding:60px 0 80px; text-align:center; animation: fadeIn 0.5s cubic-bezier(0.16,1,0.3,1);">
+      <div class="success-badge">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <span class="eyebrow">Spot Reserved</span>
+      <h2>You're Officially Registered!</h2>
+      <p class="subhead">Your spot is locked in. We've recorded your email for priority V1 access.</p>
+      
+      <div class="member-card">
+        <div class="card-title">Founding Member Status</div>
+        <div class="card-number" id="memberNum">#043</div>
+        <div class="card-status">✓ Permanent Founding Tag & Locked Number</div>
+      </div>
+      
+      <p class="subhead" style="margin-bottom:0; font-size:14px; color:var(--text-muted);">
+        Keep an eye on your inbox — we'll notify you as soon as the Builder Feed & Bulletin open.
+      </p>
+    </section>
 
     <section class="philosophy">
       <span class="kicker">The Philosophy</span>
@@ -604,46 +660,85 @@
     }
 
     const counterEl = document.getElementById('counterNum');
-    let base = 42;
+    let base = 0;
+    // Fetch current pre-registration count from Supabase
+    if (supabase) {
+      supabase
+        .from('waitlist')
+        .select('id', { count: 'exact', head: true })
+        .then(({ count, error }) => {
+          if (!error && count !== null) {
+            base = count;
+            if (counterEl) counterEl.textContent = base;
+          } else {
+            console.error('Error fetching count from Supabase:', error);
+          }
+        })
+        .catch(err => console.error('Supabase fetch error:', err));
+    }
+    // Optional: modest random increment for visual effect (can be removed if not desired)
     setInterval(() => {
-      if (Math.random() < 0.4) {
+      if (Math.random() < 0.1) {
         base += 1;
-        counterEl.textContent = base;
+        if (counterEl) counterEl.textContent = base;
       }
-    }, 4000);
+    }, 5000);
 
     const form = document.getElementById('signupForm');
-    const successMsg = document.getElementById('successMsg');
+    const successScreen = document.getElementById('successScreen');
     const memberNum = document.getElementById('memberNum');
 
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
-      const email = document.getElementById('emailInput').value.trim();
+      const emailInput = document.getElementById('emailInput');
+      if (!emailInput) return;
+      const email = emailInput.value.trim();
       if (!email) return;
 
       const submitBtn = form.querySelector('button');
-      submitBtn.disabled = true;
-      submitBtn.innerText = 'Reserving...';
+      const formError = document.getElementById('formError');
 
-      if (supabase) {
-        try {
-          const { data, error } = await supabase
-            .from('waitlist')
-            .insert([{ email: email }]);
+      // Reset error state
+      if (formError) { formError.style.display = 'none'; formError.textContent = ''; }
 
-          if (error) {
-            console.error('Supabase error:', error);
-          }
-        } catch (err) {
-          console.error('Network / Supabase error:', err);
-        }
+      // Disable button while processing
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.innerText = 'Reserving...'; }
+
+      // --- Insert into Supabase and WAIT for result ---
+      const { error: insertError } = await supabase.from('waitlist').insert([{ email }]);
+
+      if (insertError) {
+        // Re-enable the button so the user can try again
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerText = 'Reserve my spot'; }
+
+        // Friendly message for duplicate email
+        const msg = insertError.code === '23505'
+          ? "You're already on the list! 🎉"
+          : 'Something went wrong, please try again.';
+
+        if (formError) { formError.textContent = msg; formError.style.display = 'block'; }
+        console.error('Supabase insert error:', insertError);
+        return; // Stop here — do NOT show success screen
       }
 
-      base += 1;
-      counterEl.textContent = base;
-      memberNum.textContent = '#' + String(base).padStart(3, '0');
-      form.style.display = 'none';
-      successMsg.classList.add('show');
+      // --- Insert succeeded — fetch real count from DB ---
+      const { count, error: countError } = await supabase
+        .from('waitlist')
+        .select('id', { count: 'exact', head: true });
+
+      if (!countError && count !== null) {
+        base = count;
+        if (counterEl) counterEl.textContent = base;
+      }
+      if (memberNum) memberNum.textContent = '#' + String(base).padStart(3, '0');
+
+      // Hide hero section entirely
+      const heroSection = document.querySelector('.hero');
+      if (heroSection) heroSection.style.display = 'none';
+
+      // Show success screen
+      if (successScreen) successScreen.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   </script>
 
