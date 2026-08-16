@@ -489,10 +489,103 @@
         font-size: 34px;
       }
     }
+
+    /* ===== COVER SCREEN ===== */
+    #coverScreen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      width: 100%;
+      height: 100%;
+      background-image: url('assets/cover.png');
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding-bottom: 52px;
+      cursor: pointer;
+      user-select: none;
+      /* smooth slide-up exit */
+      transition: transform 0.65s cubic-bezier(0.76, 0, 0.24, 1),
+                  opacity 0.65s cubic-bezier(0.76, 0, 0.24, 1);
+      will-change: transform, opacity;
+    }
+
+    #coverScreen.dismissing {
+      transform: translateY(-100vh);
+      opacity: 0;
+    }
+
+    #coverScreen.hidden {
+      display: none;
+    }
+
+    /* Hint cue at bottom */
+    .cover-cue {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .cover-cue-text {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+    }
+
+    .cover-cue-arrow {
+      width: 36px;
+      height: 36px;
+      border: 1.5px solid rgba(255,255,255,0.25);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: bounceUp 1.6s ease-in-out infinite;
+    }
+
+    .cover-cue-arrow svg {
+      width: 14px;
+      height: 14px;
+      stroke: rgba(255,255,255,0.6);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    @keyframes bounceUp {
+      0%, 100% { transform: translateY(0); opacity: 0.5; }
+      50%       { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* lock scroll while cover is visible */
+    body.cover-active {
+      overflow: hidden;
+    }
   </style>
 </head>
 
-<body>
+<body class="cover-active">
+
+  <!-- ===== COVER SCREEN ===== -->
+  <div id="coverScreen" role="button" aria-label="Swipe up or click to enter" tabindex="0">
+    <div class="cover-cue">
+      <span class="cover-cue-text">Swipe up to begin</span>
+      <div class="cover-cue-arrow">
+        <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+      </div>
+    </div>
+  </div>
+
   <div class="wrap">
 
     <nav>
@@ -588,6 +681,113 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
+    /* ===== COVER DISMISS LOGIC ===== */
+    (function () {
+      const cover = document.getElementById('coverScreen');
+      let dismissed = false;
+
+      // Touch state
+      let touchStartY = 0;
+      let touchCurrentY = 0;
+      let isTouching = false;
+
+      // Mouse drag state
+      let mouseStartY = 0;
+      let isDragging = false;
+
+      function dismiss() {
+        if (dismissed) return;
+        dismissed = true;
+        cover.style.transform = ''; // clear any live drag offset
+        cover.style.transition = 'transform 0.65s cubic-bezier(0.76,0,0.24,1), opacity 0.65s cubic-bezier(0.76,0,0.24,1)';
+        cover.classList.add('dismissing');
+        document.body.classList.remove('cover-active');
+        cover.addEventListener('transitionend', () => {
+          cover.classList.add('hidden');
+        }, { once: true });
+      }
+
+      /* ── TOUCH (mobile) ───────────────────────── */
+      cover.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+        touchCurrentY = touchStartY;
+        isTouching = true;
+        cover.style.transition = 'none'; // disable transition while dragging
+      }, { passive: true });
+
+      cover.addEventListener('touchmove', (e) => {
+        if (!isTouching) return;
+        touchCurrentY = e.touches[0].clientY;
+        const delta = touchStartY - touchCurrentY; // positive = upward swipe
+        if (delta > 0) {
+          cover.style.transform = `translateY(${-delta}px)`;
+          cover.style.touchAction = 'none';
+        }
+      }, { passive: true });
+
+      cover.addEventListener('touchend', (e) => {
+        if (!isTouching) return;
+        isTouching = false;
+        const delta = touchStartY - e.changedTouches[0].clientY;
+        if (delta > 60) {
+          dismiss();
+        } else {
+          // Snap back
+          cover.style.transition = 'transform 0.3s ease';
+          cover.style.transform = 'translateY(0)';
+        }
+      }, { passive: true });
+
+      /* ── MOUSE DRAG (desktop) ──────────────────── */
+      cover.addEventListener('mousedown', (e) => {
+        mouseStartY = e.clientY;
+        isDragging = false;
+        cover.style.transition = 'none';
+        cover.style.cursor = 'grabbing';
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!mouseStartY) return;
+        const delta = mouseStartY - e.clientY; // positive = dragging upward
+        if (delta > 5) isDragging = true;
+        if (isDragging && delta > 0) {
+          cover.style.transform = `translateY(${-delta}px)`;
+        }
+      });
+
+      window.addEventListener('mouseup', (e) => {
+        if (!mouseStartY) return;
+        const delta = mouseStartY - e.clientY;
+        mouseStartY = 0;
+        cover.style.cursor = 'pointer';
+        if (isDragging) {
+          if (delta > 80) {
+            dismiss();
+          } else {
+            cover.style.transition = 'transform 0.3s ease';
+            cover.style.transform = 'translateY(0)';
+          }
+          isDragging = false;
+        } else {
+          // Pure click (no drag) → dismiss
+          dismiss();
+        }
+      });
+
+      /* ── SCROLL WHEEL (desktop) ───────────────── */
+      window.addEventListener('wheel', function onWheel(e) {
+        if (e.deltaY > 0) {
+          dismiss();
+          window.removeEventListener('wheel', onWheel);
+        }
+      }, { passive: true });
+
+      /* ── KEYBOARD ─────────────────────────────── */
+      cover.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowUp') dismiss();
+      });
+    })();
+
     const IG_URL = "https://www.instagram.com/unstable_conclusions/?hl=en";
     document.getElementById('igLink').href = IG_URL;
     document.getElementById('igLinkFooter').href = IG_URL;
