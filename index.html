@@ -29,10 +29,10 @@
        10 %  amber accent      (#F59E0B)
     ===================================== */
     :root {
-      /* backgrounds — 60 % */
-      --bg: #000000;
-      --surface: #0A0A0C;
-      --raised: #121215;
+      /* backgrounds — original dark blue palette */
+      --bg: #08111F;
+      --surface: #0D1626;
+      --raised: #141E30;
 
       /* brand — 30 % */
       --primary: #3B82F6;
@@ -242,22 +242,19 @@
 
     .avatars {
       display: flex;
+      align-items: center;
     }
 
-    .avatars span {
-      width: 26px;
-      height: 26px;
+    .avatars img {
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
-      background: var(--raised);
+      object-fit: cover;
       border: 2px solid var(--bg);
       margin-left: -8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
     }
 
-    .avatars span:first-child {
+    .avatars img:first-child {
       margin-left: 0;
     }
 
@@ -489,7 +486,6 @@
         font-size: 34px;
       }
     }
-
   </style>
 </head>
 
@@ -498,7 +494,8 @@
   <div class="wrap">
 
     <nav>
-      <img src="assets/Gemini_Generated_Image_8uetn98uetn98uet-removebg-preview.png" alt="Lore of Ambition" class="logo-img">
+      <img src="assets/Gemini_Generated_Image_8uetn98uetn98uet-removebg-preview.png" alt="Lore of Ambition"
+        class="logo-img">
       <a href="#" class="nav-link" id="igLink">Follow the build ↗</a>
     </nav>
 
@@ -528,7 +525,9 @@
 
       <div class="counter-strip">
         <div class="avatars">
-          <span>🧑‍💻</span><span>🎨</span><span>🚀</span><span>✍️</span>
+          <img src="assets/1.png" alt="Builder avatar">
+          <img src="assets/2.png" alt="Builder avatar">
+          <img src="assets/3.png" alt="Builder avatar">
         </div>
         <div class="counter-text"><span class="count" id="counterNum">247</span> builders already joined</div>
       </div>
@@ -548,7 +547,8 @@
 
     <div class="pillars">
       <div class="pillar">
-        <div class="pillar-icon builder-timeline-icon"><img src="assets/builder timeline.png" alt="Builder Timeline"></div>
+        <div class="pillar-icon builder-timeline-icon"><img src="assets/builder timeline.png" alt="Builder Timeline">
+        </div>
         <h3>Builder Timeline</h3>
         <p>Document daily progress, project updates, and lessons learned into a permanent record of your growth.</p>
       </div>
@@ -582,7 +582,7 @@
       <div class="logo">Lore of Ambition</div>
       <div class="tagline">For developers, designers, founders, creators & indie hackers making something real.</div>
       <a href="#" class="social" id="igLinkFooter">📷 Follow the build on Instagram</a>
-</footer>
+    </footer>
 
   </div>
 
@@ -598,7 +598,7 @@
     // Replace with your Supabase Project URL and Anon Key from your Supabase Dashboard Settings -> API
     const SUPABASE_URL = 'YOUR_SUPABASE_URL';
     const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
-    
+
     let supabase = null;
     if (SUPABASE_URL !== 'YOUR_SUPABASE_URL' && window.supabase) {
       supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
