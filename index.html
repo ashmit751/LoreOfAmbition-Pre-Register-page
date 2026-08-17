@@ -482,6 +482,78 @@
       margin-top: 1px;
     }
 
+    /* ===== BLOG GRID ===== */
+    .blog-section {
+      margin-bottom: 64px;
+    }
+
+    .blog-section .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .blog-section .section-kicker {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .blog-section .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(18px, 3vw, 22px);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 20px;
+    }
+
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .blog-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 20px;
+      text-decoration: none;
+      display: block;
+      transition: border-color 200ms ease, transform 200ms ease;
+    }
+
+    .blog-card:hover {
+      border-color: var(--primary-border);
+      transform: translateY(-2px);
+    }
+
+    .blog-card .bc-cat {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .blog-card .bc-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.45;
+      margin-bottom: 10px;
+    }
+
+    .blog-card .bc-read {
+      font-size: 12px;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
     /* ===== FOOTER ===== */
     footer {
       text-align: center;
@@ -623,6 +695,11 @@
         grid-template-columns: 1fr;
       }
 
+      /* Blog — single column */
+      .blog-grid {
+        grid-template-columns: 1fr;
+      }
+
       /* Founding card — tighter padding */
       .founding {
         padding: 28px 20px;
@@ -742,6 +819,44 @@
         </p>
       </div>
     </div>
+
+    <!-- Blog Section -->
+    <section class="blog-section">
+      <span class="kicker">From the Blog</span>
+      <h2 class="section-title" style="font-family:var(--font-heading);font-size:clamp(18px,3vw,22px);font-weight:700;letter-spacing:-.01em;margin-bottom:20px;">Ideas behind Lore of Ambition</h2>
+      <div class="blog-grid">
+        <a href="blog/social-media-rewards-results-not-the-process.html" class="blog-card">
+          <div class="bc-cat">Philosophy</div>
+          <div class="bc-title">Why Social Media Rewards Results, Not the Journey</div>
+          <div class="bc-read">Read →</div>
+        </a>
+        <a href="blog/what-is-building-in-public.html" class="blog-card">
+          <div class="bc-cat">Guide</div>
+          <div class="bc-title">What Is Building in Public? A Beginner's Guide</div>
+          <div class="bc-read">Read →</div>
+        </a>
+        <a href="blog/document-your-progress-stay-consistent.html" class="blog-card">
+          <div class="bc-cat">Productivity</div>
+          <div class="bc-title">How Documenting Your Progress Can Help You Stay Consistent</div>
+          <div class="bc-read">Read →</div>
+        </a>
+        <a href="blog/creators-need-community-not-followers.html" class="blog-card">
+          <div class="bc-cat">Community</div>
+          <div class="bc-title">Why Creators Need Community, Not Just Followers</div>
+          <div class="bc-read">Read →</div>
+        </a>
+        <a href="blog/gamification-progress-motivation.html" class="blog-card">
+          <div class="bc-cat">Features</div>
+          <div class="bc-title">Can Gamification Make Progress More Meaningful?</div>
+          <div class="bc-read">Read →</div>
+        </a>
+        <a href="blog/what-does-build-your-lore-mean.html" class="blog-card">
+          <div class="bc-cat">Brand</div>
+          <div class="bc-title">What Does &ldquo;Build Your Lore&rdquo; Mean?</div>
+          <div class="bc-read">Read →</div>
+        </a>
+      </div>
+    </section>
 
     <div class="founding">
       <div class="founding-badge"><img src="assets/medal.png" alt="Founding Member Medal"></div>
